@@ -3,18 +3,25 @@ const Aluno = require("../models/aluno")
 
 const routes = new Router()
 
-routes.get("/bem_vindo", (req, res) => {
-    res.send('Bem-Vindo')
+routes.get("/alunos", async (req, res) => {
+
+    const alunos = await Aluno.findAll()
+    res.json(alunos)
 })
 
 
 routes.post("/alunos", async (req, res) => {
+    const { nome, data_nascimento, celular } = req.body
+
     const aluno = await Aluno.create({
-        nome: "Herbert Martins Cardozo",
-        data_nascimento: "1988-09-10",
-        celular: "123456789"
+        nome: nome,
+        data_nascimento: data_nascimento,
+        celular: celular
     })
     res.json({ aluno })
 })
 
+routes.post("/cursos", async (req, res) => {
+
+})
 module.exports = routes
