@@ -81,7 +81,7 @@ routes.post("/cursos", async (req, res) => {
 routes.get("/cursos", async (req, res) => {
     try {
 
-        if (req.query.curso || req.query.body) {
+        if (req.query.curso || req.query.duracao) {
 
             const curso = req.query.curso ? req.query.curso : "none";
             const duracao = req.query.duracao ? req.query.duracao : 0;
