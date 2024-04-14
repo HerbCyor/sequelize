@@ -2,6 +2,8 @@ const { Router } = require("express")
 const Aluno = require("../models/aluno")
 const Curso = require("../models/curso")
 const { Op } = require("sequelize")
+const Professor = require("../models/professor")
+const CursoProfessor = require("../models/cursoprofessor")
 const routes = new Router()
 
 
@@ -152,12 +154,84 @@ routes.delete("/cursos/:id", async (req, res) => {
                 id: id
             }
         })
-        res.status(204).json({
+        res.status(200).json({
             message: "Curso deletado com sucesso."
         })
     } catch (error) {
         res.status(500).json({ error: "Não foi possível atualizar o curso." })
     }
+})
+
+routes.post("/professores", async (req, res) => {
+    const { nome, salario_hora, carga_horaria } = req.body
+
+    const novoProfessor = await Professor.create({
+        nome: nome,
+        salario_hora: salario_hora,
+        carga_horaria: carga_horaria
+    })
+
+    res.status(201).json(novoProfessor)
+})
+
+routes.get("/professores", async (req, res) => {
+    const professores = await Professor.findAll()
+    res.status(200).json({ professores })
+})
+
+routes.put("/professores/:id", async (req, res) => {
+    const { nome, salario_hora, carga_horaria } = req.body
+
+    if (!await Professor.findByPk(parseInt(req.params.id))) {
+        return res.status(404).json({ message: "Professor não encontrado" })
+    }
+    await Professor.update({
+        nome: nome,
+        carga_horaria: carga_horaria,
+        salario_hora: salario_hora
+    }, {
+        where: {
+            id: req.params.id
+        }
+    })
+    res.status(201).json({ message: "Professor atualizado" })
+}
+)
+routes.delete("/professores/:id", async (req, res) => {
+    const professorId = req.params.id
+
+    if (!await Professor.findByPk(parseInt(professorId))) {
+        return res.status(404).json({ message: "Professor não encontrado" })
+    }
+
+    Professor.destroy({
+        where: {
+            id: professorId
+        }
+    })
+    res.status(200).json({ message: "Deletado com sucesso" })
+
+})
+
+routes.post("/curso-professor", async (req, res) => {
+    const { cursoId, professorId } = req.body
+
+    const curso = await Curso.findByPk(parseInt(cursoId))
+    const professor = await Professor.findByPk(parseInt(professorId))
+
+    if (curso && professor) {
+        CursoProfessor.create({
+            cursoId: cursoId,
+            professorId: professorId
+        })
+    }
+
+    res.status(201).json({
+        curso: curso.nome,
+        professores: professor.nome
+    })
+
+
 })
 
 module.exports = routes
