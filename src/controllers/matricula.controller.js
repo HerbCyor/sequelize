@@ -15,10 +15,10 @@ class MatriculaController {
             }
             ///
             const curso = await Curso.findByPk(parseInt(curso_id))
-            if (!curso) return res.status(404).jason({ message: "Curso não encontrado" })
+            if (!curso) return res.status(404).json({ message: "Curso não encontrado" })
             ///
             const aluno = await Aluno.findByPk(parseInt(aluno_id))
-            if (!aluno) return res.status(404).jason({ message: "Aluno não encontrado" })
+            if (!aluno) return res.status(404).json({ message: "Aluno não encontrado" })
             ///
             const checarMatricula = Matricula.findOne({
                 where: {
