@@ -14,10 +14,10 @@ class MatriculaController {
                     .json({ message: "O ID do curso de o ID do aluno são obrigatórios." })
             }
             ///
-            const curso = await Curso.findByPk(parseInt(curso_id))
+            const curso = await Curso.findByPk(curso_id)
             if (!curso) return res.status(404).json({ message: "Curso não encontrado" })
             ///
-            const aluno = await Aluno.findByPk(parseInt(aluno_id))
+            const aluno = await Aluno.findByPk(aluno_id)
             if (!aluno) return res.status(404).json({ message: "Aluno não encontrado" })
             ///
             const checarMatricula = Matricula.findOne({
@@ -27,7 +27,7 @@ class MatriculaController {
                 }
             })
 
-            if (checarMatricula) return res.status(400).json({ message: "Aluno já matriculado no curso" })
+            if (checarMatricula) return res.status(409).json({ message: "Aluno já matriculado no curso" })
 
             const novaMatricula = await Matricula.create({
                 curso_id,

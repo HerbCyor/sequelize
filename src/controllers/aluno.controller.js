@@ -1,5 +1,4 @@
 const Aluno = require('../models/Aluno')
-
 class AlunoController {
     async cadastrarAluno(req, res) {
 
@@ -34,6 +33,7 @@ class AlunoController {
 
             res.status(201).json({ novoAluno })
         } catch (error) {
+            console.log(error)
             res.status(500).json({ error: "Não foi possível cadastrar o aluno." })
         }
     }

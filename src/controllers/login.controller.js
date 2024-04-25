@@ -1,5 +1,6 @@
 const { sign } = require('jsonwebtoken')
 const Aluno = require('../models/Aluno')
+const { compare } = require('bcryptjs')
 
 class LoginController {
     async login(req, res) {
@@ -13,16 +14,20 @@ class LoginController {
             if (!password) {
                 return res.status(400).jason({ message: "A senha é obrigatória" })
             }
-
-            const aluno = Aluno.findOne({
+            const aluno = await Aluno.findOne({
                 where: {
-                    email: email,
-                    password: password
+                    email: email
+
                 }
             })
-
             if (!aluno) {
                 return res.status(404).json({ error: "Usuário ou senha inválidos" })
+            }
+
+            const hashSenha = await compare(password.toString(), aluno.password)
+
+            if (hashSenha === false) {
+                return res.status(403).json({ mensagem: 'Aluno não encontrada' })
             }
 
             const payload = { sub: aluno.id, email: aluno.email, nome: aluno.nome }
@@ -30,7 +35,8 @@ class LoginController {
 
             res.status(200).json({ Token: token })
         } catch (error) {
-            return res.tatus(500).json({ error: error, message: "Login Indisponível. Tente novamente mais tarde." })
+            console.log(error)
+            return res.status(500).json({ error: error, message: "Login Indisponível. Tente novamente mais tarde." })
         }
     }
 }
